@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MetalDetector</string>
+    <string name="graph">Graph</string>
+    <string name="axes_values">Axes Values</string>
+</resources>
