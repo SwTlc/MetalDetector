@@ -2,4 +2,6 @@
     <string name="app_name">MetalDetector</string>
     <string name="graph">Graph</string>
     <string name="axes_values">Axes Values</string>
+    <string name="insert_city">Insert city</string>
+    <string name="insert">Insert City Name</string>
 </resources>
