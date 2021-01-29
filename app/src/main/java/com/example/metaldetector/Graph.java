@@ -5,34 +5,48 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.GraphView.GraphViewData;
+import com.jjoe64.graphview.GraphViewDataInterface;
+import com.jjoe64.graphview.GraphViewSeries;
+import com.jjoe64.graphview.LineGraphView;
 
-public class Axes extends AppCompatActivity implements SensorEventListener{
+public class Graph extends AppCompatActivity {
 
     TextView sensor_name, error_sensor, field_value, x_value, y_value, z_value;
     SensorManager sensorManager;
     private Sensor sensorField;
-    double field;
+    GraphViewSeries graphSeries;
+    float range;
     boolean check = false;
+    boolean stop = false;
+    double field;
+    int i = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_axes);
+        setContentView(R.layout.activity_graph);
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensorField = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         if(sensorField != null) {
             check = true;
-            sensor_name = findViewById(R.id.sensor_magn);
-            sensor_name.setText("Sensor name: " + sensorField.getName() + "\n"
-                    + "Sensor type: " + sensorField.getStringType() + "\n"
-                    + "Sensor vendor: " + sensorField.getVendor() + "\n"
-                    + "Sensor version: " + sensorField.getVersion() + "\n" + "\n");
+            range = sensorField.getMaximumRange();
+
+            GraphView graphView = new LineGraphView(this, "Intensity");
+            graphView = findViewById(R.id.graph);
+            graphView.setScrollable(true);
+            graphView.setViewPort(0, range); // the x range you want to show without scrolling
+            graphSeries = new GraphViewSeries(new GraphViewDataInterface[0]);
+            graphView.addSeries(graphSeries);
+            setContentView(graphView);
+
         }else {
             error_sensor = findViewById(R.id.error);
             error_sensor.setText("non hai il magnetometro, impossibile trovare i dati");
@@ -47,19 +61,19 @@ public class Axes extends AppCompatActivity implements SensorEventListener{
             float z = event.values[2];
             field = getField(x,y,z);
 
-            field_value = findViewById(R.id.fieldTxt);
-            x_value = findViewById(R.id.xreading);
-            y_value = findViewById(R.id.yreading);
-            z_value = findViewById(R.id.zreading);
-
-            field_value.setText("Calculated magnetic field:"+field+ " μT");
-
-
-            x_value.setText("X: " + x + " μT");
-            y_value.setText("Y: " + y + " μT");
-            z_value.setText("Z: " + z + " μT");
+            while(!stop) {
+                graphSeries.appendData(new GraphView.GraphViewData(i, field), true, 300);
+                //where 300 is the maximum number of values to keep
+                i++;
+                field_value = findViewById(R.id.fieldTxt);
+                field_value.setText("Calculated magnetic field:" + field + " μT");
+            }
 
         }
+    }
+
+    public void onClick(View view) {
+        stop = true;
     }
 
     private double getField(float x, float y, float z) {
@@ -81,5 +95,4 @@ public class Axes extends AppCompatActivity implements SensorEventListener{
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
-
 }
