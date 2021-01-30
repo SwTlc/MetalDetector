@@ -52,7 +52,7 @@ public class Axes extends AppCompatActivity implements SensorEventListener{
             y_value = findViewById(R.id.yreading);
             z_value = findViewById(R.id.zreading);
 
-            field_value.setText("Calculated magnetic field:"+field+ " μT");
+            field_value.setText("Calculated magnetic field:  "+field+ " μT");
 
 
             x_value.setText("X: " + x + " μT");

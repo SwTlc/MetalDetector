@@ -2,22 +2,17 @@ package com.example.metaldetector;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.TextView;
 
 import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.GraphViewDataInterface;
-import com.jjoe64.graphview.GraphViewSeries;
 import com.jjoe64.graphview.Viewport;
 import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 public class Graph extends AppCompatActivity implements SensorEventListener {
@@ -51,11 +46,10 @@ public class Graph extends AppCompatActivity implements SensorEventListener {
             viewport.setYAxisBoundsManual(true);
             viewport.setMinY(0);
             // la max y non può essere il range perchè va oltre ai 3000 tipo, ho fatto un po' di prove e 300 forse ci sta
-            viewport.setMaxY(300);
+            viewport.setMaxY(180);
             viewport.scrollToEnd();
             // per usare scrollToEnd è necessario che setXAxisBoundManual sia true
             viewport.setXAxisBoundsManual(true);
-
 
         }else {
             error_sensor = findViewById(R.id.error);
@@ -89,18 +83,16 @@ public class Graph extends AppCompatActivity implements SensorEventListener {
                         });
 
                         // sleep to slow down the add of entries
-                        try {
-                            Thread.sleep(1000); // ho aumentato a 2 secondi (non so se abbia fatto effetto)
-                        } catch (InterruptedException e) {
+                        //try {
+                          //  Thread.sleep(2000); // ho aumentato a 2 secondi (non so se abbia fatto effetto)
+                        //} catch (InterruptedException e) {
                             // manage error ... // QUI BISOGNA METTERE QUALCOSA
-                        }
+                        //}
                     }
                 }
             }).start();
         }
-        }
     }
-
 
     private double getField(float x, float y, float z) {
         return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z,2));
@@ -126,22 +118,21 @@ public class Graph extends AppCompatActivity implements SensorEventListener {
                     });
 
                     // sleep to slow down the add of entries
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
+                    //try {
+                      //  Thread.sleep(2000);
+                    //} catch (InterruptedException e) {
                         // manage error ...
-                    }
+                    //}
                 }
             }
         }).start();
     }
 
-    // add random data to graph
+    // add data to graph
     private void addEntry() {
         // here, we choose to display max 10 points on the viewport and we scroll to end
-
         //prova con 300 pti
-        series.appendData(new DataPoint(lastX++, field * 10d), true, 300);
+        series.appendData(new DataPoint(lastX++, field), true, 100);
     }
 
     @Override

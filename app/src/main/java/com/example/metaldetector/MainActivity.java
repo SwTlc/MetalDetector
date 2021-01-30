@@ -14,15 +14,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    public void openGraph(View view)
-    {
+    public void openGraph(View view) {
         Intent intent = new Intent(this,Graph.class);
         startActivity(intent);
     }
     // graph.class = nome activity 1
 
-   public void openAxes(View view)
-   {
+   public void openAxes(View view) {
       Intent intent = new Intent(this,Axes.class);
       startActivity(intent);
    }

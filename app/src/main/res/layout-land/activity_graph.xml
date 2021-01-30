@@ -10,13 +10,27 @@
     android:paddingBottom="20dp"
     android:paddingLeft="20dp"
     android:paddingRight="20dp"
-    android:paddingTop="20dp" >
+    android:paddingTop="10dp" >
 
     <TextView
+        android:id="@+id/error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+    <TextView
+        android:id="@+id/fieldTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="@string/turn_the_screen"/>
+        android:layout_marginTop="0dp"
+        android:backgroundTint="@color/hex"/>
+
+    <com.jjoe64.graphview.GraphView
+        android:id="@+id/graph"
+        android:layout_width="650dp"
+        android:layout_height="312dp"
+        android:background="@drawable/background_graph" />
+
 
 
 </LinearLayout>
