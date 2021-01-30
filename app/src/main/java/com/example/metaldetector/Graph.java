@@ -28,7 +28,7 @@ public class Graph extends AppCompatActivity implements SensorEventListener {
     float range;
     boolean check = false;
     double field;
-    private GraphViewSeries series;
+    private LineGraphSeries<DataPoint> series;
     private int lastX = 0;
 
     @Override
@@ -40,21 +40,21 @@ public class Graph extends AppCompatActivity implements SensorEventListener {
         sensorField = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         if(sensorField != null) {
             check = true;
-            range = sensorField.getMaximumRange();
+            // range = sensorField.getMaximumRange();
             // we get graph view instance
             GraphView graph = (GraphView) findViewById(R.id.graph);
             // data
-            //series = new LineGraphSeries<DataPoint>();
-            series = new GraphViewSeries(new GraphViewDataInterface[0]);
+            series = new LineGraphSeries<DataPoint>();
             graph.addSeries(series);
             // customize a little bit viewport
-            //graph.setViewport().setYAxisBoundsManual(true);
-            //graph.getViewport().setMinY(0);
-            //graph.getViewport().setMaxY(10);
-            //graph.getViewport().setScrollable(true);
-
-            graph.setScrollable(true);
-            graph.setViewPort(0, range);
+            Viewport viewport = graph.getViewport();
+            viewport.setYAxisBoundsManual(true);
+            viewport.setMinY(0);
+            // la max y non può essere il range perchè va oltre ai 3000 tipo, ho fatto un po' di prove e 300 forse ci sta
+            viewport.setMaxY(300);
+            viewport.scrollToEnd();
+            // per usare scrollToEnd è necessario che setXAxisBoundManual sia true
+            viewport.setXAxisBoundsManual(true);
 
 
         }else {
@@ -73,6 +73,31 @@ public class Graph extends AppCompatActivity implements SensorEventListener {
 
             field_value = findViewById(R.id.fieldTxt);
             field_value.setText("Calculated magnetic field:" + field + " μT");
+
+            new Thread(new Runnable() {
+
+                @Override
+                public void run() {
+                    // we add 100 new entries
+                    for (int i = 0; i < 100; i++) {
+                        runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                addEntry();
+                            }
+                        });
+
+                        // sleep to slow down the add of entries
+                        try {
+                            Thread.sleep(1000); // ho aumentato a 2 secondi (non so se abbia fatto effetto)
+                        } catch (InterruptedException e) {
+                            // manage error ... // QUI BISOGNA METTERE QUALCOSA
+                        }
+                    }
+                }
+            }).start();
+        }
         }
     }
 
@@ -102,7 +127,7 @@ public class Graph extends AppCompatActivity implements SensorEventListener {
 
                     // sleep to slow down the add of entries
                     try {
-                        Thread.sleep(600);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         // manage error ...
                     }
@@ -114,7 +139,9 @@ public class Graph extends AppCompatActivity implements SensorEventListener {
     // add random data to graph
     private void addEntry() {
         // here, we choose to display max 10 points on the viewport and we scroll to end
-        series.appendData((GraphViewDataInterface) new DataPoint(lastX++, field * 10d), true, 10);
+
+        //prova con 300 pti
+        series.appendData(new DataPoint(lastX++, field * 10d), true, 300);
     }
 
     @Override
