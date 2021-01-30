@@ -20,7 +20,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="20dp"
         android:onClick="openGraph"
         android:text="@string/graph"
         android:textSize="30dp"
@@ -31,12 +31,12 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
         android:backgroundTint="@color/hex"
         android:onClick="openAxes"
         android:text="@string/axes_values"
         android:textColor="@color/pink"
-        android:textSize="30dp"
-        android:layout_gravity="center" />
+        android:textSize="30dp" />
 
 </LinearLayout>

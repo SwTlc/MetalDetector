@@ -66,7 +66,7 @@ public class Graph extends AppCompatActivity implements SensorEventListener {
             field = getField(x, y, z);
 
             field_value = findViewById(R.id.fieldTxt);
-            field_value.setText("Calculated magnetic field:" + field + " μT");
+            field_value.setText("Calculated magnetic field:"+ field + " μT");
 
             new Thread(new Runnable() {
 
