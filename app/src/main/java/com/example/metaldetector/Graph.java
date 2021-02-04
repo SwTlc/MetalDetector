@@ -20,7 +20,6 @@ public class Graph extends AppCompatActivity implements SensorEventListener {
     TextView error_sensor, field_value;
     SensorManager sensorManager;
     private Sensor sensorField;
-    float range;
     boolean check = false;
     double field;
     private LineGraphSeries<DataPoint> series;
@@ -35,18 +34,18 @@ public class Graph extends AppCompatActivity implements SensorEventListener {
         sensorField = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
         if(sensorField != null) {
             check = true;
-            // range = sensorField.getMaximumRange();
-            // we get graph view instance
-            GraphView graph = (GraphView) findViewById(R.id.graph);
-            // data
+            // graphview da xml
+            GraphView graph = findViewById(R.id.graph);
+            // creare una serie di dati che viene aggiunta al graph
             series = new LineGraphSeries<DataPoint>();
             graph.addSeries(series);
-            // customize a little bit viewport
+            // modificare l'aspetto della viewport
             Viewport viewport = graph.getViewport();
             viewport.setYAxisBoundsManual(true);
             viewport.setMinY(0);
             // la max y non può essere il range perchè va oltre ai 3000 tipo, ho fatto un po' di prove e 300 forse ci sta
             viewport.setMaxY(180);
+            // per andare sempre alla fine del graph uso scrollToEnd
             viewport.scrollToEnd();
             // per usare scrollToEnd è necessario che setXAxisBoundManual sia true
             viewport.setXAxisBoundsManual(true);
@@ -68,11 +67,12 @@ public class Graph extends AppCompatActivity implements SensorEventListener {
             field_value = findViewById(R.id.fieldTxt);
             field_value.setText("Calculated magnetic field:"+ field + " μT");
 
+            // we're going to simulate real time with thread that append data to the graph
             new Thread(new Runnable() {
 
                 @Override
                 public void run() {
-                    // we add 100 new entries
+                    // i<100 perchè i<20 lento, i<300 veloce
                     for (int i = 0; i < 100; i++) {
                         runOnUiThread(new Runnable() {
 
@@ -81,16 +81,19 @@ public class Graph extends AppCompatActivity implements SensorEventListener {
                                 addEntry();
                             }
                         });
-
                         // sleep to slow down the add of entries
-                        //try {
-                          //  Thread.sleep(2000); // ho aumentato a 2 secondi (non so se abbia fatto effetto)
-                        //} catch (InterruptedException e) {
-                            // manage error ... // QUI BISOGNA METTERE QUALCOSA
-                        //}
+                        try {
+                            Thread.sleep(2000); // ho aumentato a 2 secondi (non so se abbia fatto effetto)
+                        } catch (InterruptedException e) {
+                            error_sensor = findViewById(R.id.error);
+                            error_sensor.setText("Error");
+                        }
                     }
                 }
             }).start();
+        } else {
+            error_sensor = findViewById(R.id.error);
+            error_sensor.setText("non hai il magnetometro, impossibile trovare i dati");
         }
     }
 
@@ -103,35 +106,11 @@ public class Graph extends AppCompatActivity implements SensorEventListener {
         super.onResume();
         sensorManager.registerListener(this, sensorField, Sensor.TYPE_MAGNETIC_FIELD, SensorManager.SENSOR_DELAY_NORMAL);
         // we're going to simulate real time with thread that append data to the graph
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                // we add 100 new entries
-                for (int i = 0; i < 100; i++) {
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            addEntry();
-                        }
-                    });
-
-                    // sleep to slow down the add of entries
-                    //try {
-                      //  Thread.sleep(2000);
-                    //} catch (InterruptedException e) {
-                        // manage error ...
-                    //}
-                }
-            }
-        }).start();
     }
 
-    // add data to graph
+    // aggiungere dati al grafico
     private void addEntry() {
-        // here, we choose to display max 10 points on the viewport and we scroll to end
-        //prova con 300 pti
+        // visualizzare 100 valori del campo per ogni i (300 va più veloce)
         series.appendData(new DataPoint(lastX++, field), true, 100);
     }
 
