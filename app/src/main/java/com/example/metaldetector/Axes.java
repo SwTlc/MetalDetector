@@ -14,7 +14,7 @@ import android.widget.TextView;
 public class Axes extends AppCompatActivity implements SensorEventListener{
 
     TextView sensor_name, error_sensor, field_value, x_value, y_value, z_value;
-    SensorManager sensorManager;
+    private SensorManager sensorManager;
     private Sensor sensorField;
     double field;
     boolean check = false;
@@ -69,7 +69,7 @@ public class Axes extends AppCompatActivity implements SensorEventListener{
     @Override
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener(this, sensorField, Sensor.TYPE_MAGNETIC_FIELD, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, sensorField, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override

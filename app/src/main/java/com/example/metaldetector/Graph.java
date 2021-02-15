@@ -18,7 +18,7 @@ import com.jjoe64.graphview.series.LineGraphSeries;
 public class Graph extends AppCompatActivity implements SensorEventListener {
 
     TextView error_sensor, field_value;
-    SensorManager sensorManager;
+    private SensorManager sensorManager;
     private Sensor sensorField;
     boolean check = false;
     double field;
@@ -43,7 +43,6 @@ public class Graph extends AppCompatActivity implements SensorEventListener {
             Viewport viewport = graph.getViewport();
             viewport.setYAxisBoundsManual(true);
             viewport.setMinY(0);
-            // la max y non può essere il range perchè va oltre ai 3000 tipo, ho fatto un po' di prove e 300 forse ci sta
             viewport.setMaxY(180);
             // per andare sempre alla fine del graph uso scrollToEnd
             viewport.scrollToEnd();
@@ -67,7 +66,7 @@ public class Graph extends AppCompatActivity implements SensorEventListener {
             field_value = findViewById(R.id.fieldTxt);
             field_value.setText("Calculated magnetic field:"+ field + " μT");
 
-            // we're going to simulate real time with thread that append data to the graph
+            // simulate real time with thread that append data to the graph
             new Thread(new Runnable() {
 
                 @Override
@@ -81,9 +80,9 @@ public class Graph extends AppCompatActivity implements SensorEventListener {
                                 addEntry();
                             }
                         });
-                        // sleep to slow down the add of entries
+                        // slow down the add of entries
                         try {
-                            Thread.sleep(2000); // ho aumentato a 2 secondi (non so se abbia fatto effetto)
+                            Thread.sleep(2000); // 2 secondi
                         } catch (InterruptedException e) {
                             error_sensor = findViewById(R.id.error);
                             error_sensor.setText("Error");
@@ -91,6 +90,7 @@ public class Graph extends AppCompatActivity implements SensorEventListener {
                     }
                 }
             }).start();
+
         } else {
             error_sensor = findViewById(R.id.error);
             error_sensor.setText("non hai il magnetometro, impossibile trovare i dati");
@@ -101,17 +101,16 @@ public class Graph extends AppCompatActivity implements SensorEventListener {
         return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z,2));
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        sensorManager.registerListener(this, sensorField, Sensor.TYPE_MAGNETIC_FIELD, SensorManager.SENSOR_DELAY_NORMAL);
-        // we're going to simulate real time with thread that append data to the graph
-    }
-
     // aggiungere dati al grafico
     private void addEntry() {
         // visualizzare 100 valori del campo per ogni i (300 va più veloce)
         series.appendData(new DataPoint(lastX++, field), true, 100);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sensorManager.registerListener(this, sensorField, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
